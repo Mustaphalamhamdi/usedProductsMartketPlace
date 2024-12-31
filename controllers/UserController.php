@@ -75,14 +75,8 @@ class UserController {
                 if(password_verify($password, $user['password'])) {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
-                    $_SESSION['is_admin'] = $user['is_admin'];
-                    
-                    // Redirect based on user role
-                    if($user['is_admin']) {
-                        header("Location: ../views/admin/dashboard.php");
-                    } else {
-                        header("Location: ../index.php");
-                    }
+                    $_SESSION['is_logged_in'] = true;  // Add this
+                    header("Location: ../index.php");
                     exit();
                 }
             }
