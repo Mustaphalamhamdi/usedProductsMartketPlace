@@ -1,5 +1,4 @@
 <?php
-// Include our header
 require_once "../includes/header.php";
 ?>
 
@@ -11,7 +10,6 @@ require_once "../includes/header.php";
             </div>
             <div class="card-body">
                 <form action="../../controllers/UserController.php" method="POST">
-                    <!-- Hidden input to identify the action -->
                     <input type="hidden" name="action" value="register">
                     
                     <div class="mb-3">

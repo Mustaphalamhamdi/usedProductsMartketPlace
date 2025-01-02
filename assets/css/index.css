@@ -1,10 +1,9 @@
-/* Global Styles */
+
 body {
     background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
     font-family: 'Poppins', sans-serif;
 }
 
-/* Hero Section */
 .hero-section {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     color: white;
@@ -46,7 +45,6 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* Categories Section */
 .section-categories {
     background: white;
     margin-top: -50px;
@@ -97,8 +95,6 @@ body {
 .category-card:hover .category-icon {
     transform: scale(1.1);
 }
-
-/* Products Section */
 .product-section {
     padding: 80px 0;
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
@@ -134,7 +130,6 @@ body {
     font-weight: 700;
 }
 
-/* How It Works Section */
 .how-it-works {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     padding: 100px 0;
@@ -202,7 +197,6 @@ body {
     color: rgba(255,255,255,0.8) !important;
 }
 
-/* Buttons */
 .btn-gradient {
     background: linear-gradient(135deg, #1e3c72, #2a5298);
     border: none;
@@ -237,10 +231,8 @@ body {
     box-shadow: 0 10px 20px rgba(30,60,114,0.2);
 }
 
-/* Add Google Font */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
-/* Animations */
 @keyframes float {
     0% { transform: translateY(0px); }
     50% { transform: translateY(-10px); }
@@ -251,7 +243,6 @@ body {
     animation: float 6s ease-in-out infinite;
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 10px;
 }

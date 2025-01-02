@@ -16,8 +16,6 @@ $categories = $categoryController->listCategories();
                 <div class="card-body">
                     <form action="../../../controllers/ProductController.php" method="POST" enctype="multipart/form-data">
                         <input type="hidden" name="action" value="create">
-                        
-                        <!-- Image Upload Section -->
                         <div class="mb-4">
                             <label for="images" class="form-label">
                                 <i class="bi bi-images me-2"></i>Product Images
@@ -29,8 +27,6 @@ $categories = $categoryController->listCategories();
                             </small>
                             <div id="imagePreview" class="mt-3 d-flex flex-wrap gap-2"></div>
                         </div>
-
-                        <!-- Title Section -->
                         <div class="mb-4">
                             <label for="title" class="form-label">
                                 <i class="bi bi-tag me-2"></i>Product Title
@@ -38,8 +34,6 @@ $categories = $categoryController->listCategories();
                             <input type="text" class="form-control" id="title" name="title" required
                                    placeholder="Enter product title">
                         </div>
-
-                        <!-- Category Section -->
                         <div class="mb-4">
                             <label for="category_id" class="form-label">
                                 <i class="bi bi-folder me-2"></i>Category
@@ -53,8 +47,6 @@ $categories = $categoryController->listCategories();
                                 <?php endforeach; ?>
                             </select>
                         </div>
-
-                        <!-- Price Section -->
                         <div class="mb-4">
                             <label for="price" class="form-label">
                                 <i class="bi bi-currency-dollar me-2"></i>Price
@@ -65,8 +57,6 @@ $categories = $categoryController->listCategories();
                                 <span class="input-group-text">MAD</span>
                             </div>
                         </div>
-
-                        <!-- Description Section -->
                         <div class="mb-4">
                             <label for="description" class="form-label">
                                 <i class="bi bi-text-paragraph me-2"></i>Description
@@ -74,8 +64,6 @@ $categories = $categoryController->listCategories();
                             <textarea class="form-control" id="description" name="description" 
                                       rows="4" required placeholder="Describe your product"></textarea>
                         </div>
-
-                        <!-- Submit Buttons -->
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-plus-circle me-2"></i>Create Listing
@@ -105,7 +93,7 @@ document.getElementById('images').addEventListener('change', function(e) {
     for (let i = 0; i < this.files.length; i++) {
         const file = this.files[i];
         if (file) {
-            if (file.size > 5242880) { // 5MB
+            if (file.size > 5242880) {
                 alert('File ' + file.name + ' is too large. Maximum size is 5MB');
                 continue;
             }

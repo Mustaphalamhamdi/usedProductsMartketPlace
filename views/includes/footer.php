@@ -3,7 +3,6 @@
 <footer class="footer">
     <div class="container">
         <div class="row">
-            <!-- About Section -->
             <div class="col-lg-4 mb-4 mb-lg-0">
                 <h5 class="footer-heading">About SouqCycle</h5>
                 <p class="text-white-50 mb-4">
@@ -16,8 +15,6 @@
                     <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
                 </div>
             </div>
-
-            <!-- Quick Links -->
             <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
                 <h5 class="footer-heading">Quick Links</h5>
                 <ul class="footer-links">
@@ -30,8 +27,6 @@
                     <?php endif; ?>
                 </ul>
             </div>
-
-            <!-- Categories -->
             <div class="col-lg-2 col-md-4 mb-4 mb-md-0">
                 <h5 class="footer-heading">Categories</h5>
                 <ul class="footer-links">
@@ -41,8 +36,6 @@
                     <li><a href="/views/product/list.php"><i class="bi bi-chevron-right"></i>Motos</a></li>
                 </ul>
             </div>
-
-            <!-- Contact Info -->
             <div class="col-lg-4 col-md-4">
                 <h5 class="footer-heading">Contact Us</h5>
                 <ul class="footer-links">
@@ -61,8 +54,6 @@
                 </ul>
             </div>
         </div>
-
-        <!-- Footer Bottom -->
         <div class="footer-bottom">
             <p>&copy; <?php echo date('Y'); ?> SouqCycle. All rights reserved. 
                Designed by <a href="https://github.com/Mustaphalamhamdi" class="text-white">Mustapha Lamhamdi Alaoui</a></p>
@@ -70,7 +61,6 @@
     </div>
 </footer>
 
-<!-- Bootstrap JS and other scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

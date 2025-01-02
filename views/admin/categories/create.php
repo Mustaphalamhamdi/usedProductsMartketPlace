@@ -2,8 +2,6 @@
 require_once "../../includes/header.php";
 require_once "../../includes/auth_check.php";
 requireAdmin();
-
-// Display any messages
 if (isset($_SESSION['error'])) {
     echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
     unset($_SESSION['error']);
@@ -33,8 +31,6 @@ if (isset($_SESSION['error'])) {
 
     <button type="submit" class="btn btn-primary">Create Category</button>
 </form>
-
-<!-- Add this for debugging -->
 <script>
 document.querySelector('form').addEventListener('submit', function(e) {
     console.log('Form data:', new FormData(this));

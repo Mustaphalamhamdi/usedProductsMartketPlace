@@ -14,10 +14,8 @@ $products = $selectedCategory ?
     $productController->listProducts();
 ?>
 
-<!-- Link to product list specific CSS -->
 <link rel="stylesheet" href="/../assets/css/productsList.css">
 
-<!-- Page Header -->
 <div class="product-page-header">
     <div class="container">
         <div class="row align-items-center">
@@ -43,7 +41,6 @@ $products = $selectedCategory ?
 
 <div class="container pb-5">
     <div class="row">
-        <!-- Filters Sidebar -->
         <div class="col-md-3">
             <div class="filter-sidebar">
                 <h5 class="mb-4">Categories</h5>
@@ -60,8 +57,7 @@ $products = $selectedCategory ?
                 </div>
             </div>
         </div>
-
-        <!-- Products Grid -->
+        
         <div class="col-md-9">
             <?php if ($products && count($products) > 0): ?>
                 <div class="product-grid">

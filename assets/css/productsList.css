@@ -1,4 +1,4 @@
-/* Product List Page Styles */
+
 .product-page-header {
     background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
     padding: 60px 0;
@@ -137,7 +137,6 @@
     color: white;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .filter-sidebar {
         margin-bottom: 30px;

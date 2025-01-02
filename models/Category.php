@@ -20,12 +20,8 @@ class Category {
                 (:name, :description, :created_by)";
 
         $stmt = $this->conn->prepare($query);
-
-        // Sanitize
         $this->name = htmlspecialchars(strip_tags($this->name));
         $this->description = htmlspecialchars(strip_tags($this->description));
-
-        // Bind parameters
         $stmt->bindParam(':name', $this->name);
         $stmt->bindParam(':description', $this->description);
         $stmt->bindParam(':created_by', $this->created_by);

@@ -12,10 +12,7 @@ function requireLogin() {
 }
 
 function requireAdmin() {
-    // First check if user is logged in
     requireLogin();
-    
-    // Then check if user is admin
     if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
         $_SESSION['error'] = "Access denied. Admin privileges required.";
         header("Location: ../index.php");

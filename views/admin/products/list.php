@@ -3,14 +3,11 @@ require_once "../../includes/header.php";
 require_once "../../includes/auth_check.php";
 require_once "../../../controllers/ProductController.php";
 
-// Ensure user is admin
 requireAdmin();
 
-// Get all products
 $productController = new ProductController();
 $products = $productController->getAllProductsForAdmin();
 
-// Display messages
 if (isset($_SESSION['success'])) {
     echo '<div class="alert alert-success">' . $_SESSION['success'] . '</div>';
     unset($_SESSION['success']);
@@ -29,7 +26,6 @@ if (isset($_SESSION['error'])) {
 
     <div class="card">
         <div class="card-body">
-            <!-- Status Filter -->
             <div class="mb-3">
                 <label class="me-2">Filter by Status:</label>
                 <select id="statusFilter" class="form-select d-inline-block w-auto" onchange="filterProducts()">

@@ -36,7 +36,6 @@ class ProductImage {
         }
         return $results;
     }
-
     public function getProductImages($productId) {
         $stmt = $this->conn->prepare(
             "SELECT * FROM {$this->table_name} WHERE product_id = ? ORDER BY id ASC"
@@ -46,18 +45,13 @@ class ProductImage {
     }
     public function deleteProductImages($productId) {
         try {
-            // Get all images for this product
             $images = $this->getProductImages($productId);
-            
-            // Delete physical files
             foreach ($images as $image) {
                 $filepath = $this->upload_path . $image['image_path'];
                 if (file_exists($filepath)) {
                     unlink($filepath);
                 }
             }
-            
-            // Delete database records
             $query = "DELETE FROM " . $this->table_name . " WHERE product_id = :product_id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':product_id', $productId);

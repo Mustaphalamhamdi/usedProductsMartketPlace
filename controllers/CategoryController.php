@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . "/../config/database.php";  // Fix the path using __DIR__
+require_once __DIR__ . "/../config/database.php";
 require_once __DIR__ . "/../models/Category.php";
 
 class CategoryController {
@@ -11,8 +11,6 @@ class CategoryController {
         $this->db = $database->getConnection();
         $this->category = new Category($this->db);
     }
-
-    // Create new category (admin only)
     public function createCategory($data) {
         $this->category->name = $data['name'];
         $this->category->description = $data['description'] ?? '';
@@ -27,7 +25,6 @@ class CategoryController {
         }
         exit();
     }
-    // In CategoryController.php
 public function updateCategory($id, $data) {
     try {
         $query = "UPDATE categories 
@@ -51,15 +48,10 @@ public function updateCategory($id, $data) {
 }
     public function deleteCategory($categoryId) {
         try {
-            // Begin transaction
             $this->db->beginTransaction();
-
-            // Check if admin
             if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
                 throw new Exception("Unauthorized access");
             }
-
-            // Delete category
             $query = "DELETE FROM categories WHERE id = :id";
             $stmt = $this->db->prepare($query);
             $stmt->bindParam(":id", $categoryId, PDO::PARAM_INT);
@@ -76,8 +68,6 @@ public function updateCategory($id, $data) {
             error_log("Delete category error: " . $e->getMessage());
             $_SESSION['error'] = $e->getMessage();
         }
-
-        // Redirect to the categories list page
         header("Location: /../categories/list.php");
         exit();
     }
@@ -160,7 +150,6 @@ public function updateCategory($id, $data) {
             return [];
         }
     }
-    // Get all categories
     public function listCategories() {
         return $this->category->getAllCategories();
     }

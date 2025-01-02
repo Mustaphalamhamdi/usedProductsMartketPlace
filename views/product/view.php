@@ -3,35 +3,29 @@ require_once "../includes/header.php";
 require_once "../../controllers/ProductController.php";
 require_once "../../models/ProductImage.php";
 
-// Initialize database connection
 $db = (new Database())->getConnection();
 
-// Check for product ID
 if (!isset($_GET['id'])) {
    $_SESSION['error'] = "No product specified";
    header("Location: list.php");
    exit();
 }
 
-// Get product details
 $productController = new ProductController();
 $product = $productController->showProduct($_GET['id']);
 
-// Check if product exists
 if (!$product) {
    $_SESSION['error'] = "Product not found";
    header("Location: list.php");
    exit();
 }
 
-// Get product images
 $productImage = new ProductImage($db);
 $images = $productImage->getProductImages($product['id']);
 $imagePath = !empty($images) ? "/SouqCycle/uploads/products/" . $images[0]['image_path'] : "/SouqCycle/assets/images/no-image.jpg";
 ?>
 
 <div class="container py-4">
-   <!-- Back button -->
    <div class="mb-4">
        <a href="list.php" class="btn btn-outline-primary">
            <i class="bi bi-arrow-left"></i> Back to Listings
@@ -39,7 +33,6 @@ $imagePath = !empty($images) ? "/SouqCycle/uploads/products/" . $images[0]['imag
    </div>
 
    <div class="row">
-       <!-- Product Images Section -->
        <div class="col-md-6 mb-4">
            <div class="card shadow-sm">
                <img src="<?php echo htmlspecialchars($imagePath); ?>" 
@@ -65,8 +58,6 @@ $imagePath = !empty($images) ? "/SouqCycle/uploads/products/" . $images[0]['imag
                <?php endif; ?>
            </div>
        </div>
-
-       <!-- Product Details Section -->
        <div class="col-md-6">
            <div class="card shadow-sm h-100">
                <div class="card-body">

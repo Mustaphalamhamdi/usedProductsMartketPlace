@@ -3,54 +3,40 @@ class Product {
    private $conn;
    private $table_name = "products";
    private $items_per_page = 9;
-
-   // Product properties
    public $id;
    public $title;
    public $description;
    public $price;
    public $user_id;
-   public $category_id; // Added category_id
+   public $category_id;
    public $status;
    public $creation_date;
 
    public function __construct($db) {
        $this->conn = $db;
    }
-
-   // Create a new product listing
    public function create() {
-       // Sanitize input
        $this->title = htmlspecialchars(strip_tags($this->title));
        $this->description = htmlspecialchars(strip_tags($this->description));
        $this->price = floatval($this->price);
        $this->category_id = intval($this->category_id);
-
-       // Insert query with category_id
        $query = "INSERT INTO " . $this->table_name . "
                (title, description, price, user_id, category_id, status)
                VALUES
                (:title, :description, :price, :user_id, :category_id, 'available')";
-
        try {
            $stmt = $this->conn->prepare($query);
-
-           // Bind all values
            $stmt->bindParam(":title", $this->title);
            $stmt->bindParam(":description", $this->description);
            $stmt->bindParam(":price", $this->price);
            $stmt->bindParam(":user_id", $this->user_id);
            $stmt->bindParam(":category_id", $this->category_id);
-
            return $stmt->execute();
-           
        } catch(PDOException $e) {
            error_log("Create product error: " . $e->getMessage());
            return false;
        }
    }
-
-   // Get all products with optional filter for status
    public function getAllProducts($status = null) {
        $query = "SELECT p.*, u.username, u.phone_number, c.name as category_name 
                 FROM " . $this->table_name . " p
@@ -78,8 +64,6 @@ class Product {
            return false;
        }
    }
-
-   // Get a single product by ID
    public function getProductById($id) {
        $query = "SELECT p.*, u.username, u.phone_number, c.name as category_name 
                 FROM " . $this->table_name . " p

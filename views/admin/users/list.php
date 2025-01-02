@@ -3,14 +3,11 @@ require_once "../../includes/header.php";
 require_once "../../includes/auth_check.php";
 require_once "../../../controllers/UserController.php";
 
-// Ensure user is admin
 requireAdmin();
 
-// Get all users
 $userController = new UserController();
 $users = $userController->getAllUsers();
 
-// Display messages if any
 if (isset($_SESSION['success'])) {
     echo '<div class="alert alert-success">' . $_SESSION['success'] . '</div>';
     unset($_SESSION['success']);

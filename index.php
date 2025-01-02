@@ -10,15 +10,11 @@ $productController = new ProductController();
 $latestProducts = $productController->getRecentProducts(6);
 ?>
 
-<!-- Custom CSS -->
 <link rel="stylesheet" href="./assets/css/index.css">
-
-<!-- Carousel CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
-<!-- Hero Section -->
 <section class="hero-section">
     <div class="container">
         <div class="row align-items-center">
@@ -36,7 +32,6 @@ $latestProducts = $productController->getRecentProducts(6);
     </div>
 </section>
 
-<!-- Categories Section -->
 <section class="py-5">
     <div class="container">
         <h2 class="section-title">Browse Categories</h2>
@@ -70,7 +65,6 @@ $latestProducts = $productController->getRecentProducts(6);
     </div>
 </section>
 
-<!-- Latest Products -->
 <section class="py-5">
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -108,7 +102,6 @@ $latestProducts = $productController->getRecentProducts(6);
     </div>
 </section>
 
-<!-- How It Works -->
 <section class="how-it-works">
     <div class="container">
         <h2 class="section-title text-center">How It Works</h2>

@@ -4,13 +4,11 @@ require_once "../includes/auth_check.php";
 require_once "../../controllers/UserController.php";
 require_once "../../controllers/ProductController.php";
 
-// Ensure user is admin
 requireAdmin();
 
 $userController = new UserController();
 $productController = new ProductController();
 
-// Get statistics
 $totalUsers = $userController->getTotalUsers();
 $totalProducts = $productController->getTotalProducts();
 ?>
@@ -19,7 +17,6 @@ $totalProducts = $productController->getTotalProducts();
 
 <div class="admin-dashboard">
     <div class="row g-0">
-        <!-- Sidebar -->
         <div class="col-md-3 col-lg-2">
             <div class="sidebar">
                 <div class="sidebar-header">
@@ -47,17 +44,12 @@ $totalProducts = $productController->getTotalProducts();
                 </nav>
             </div>
         </div>
-
-        <!-- Main Content -->
         <div class="col-md-9 col-lg-10">
             <div class="content">
-                <!-- Welcome Message -->
                 <div class="dashboard-card">
                     <h2>Welcome, <?php echo $_SESSION['username']; ?>!</h2>
                     <p class="text-muted">Here's what's happening with your marketplace today.</p>
                 </div>
-
-                <!-- Statistics -->
                 <div class="row">
                     <div class="col-md-4">
                         <div class="stat-card">
@@ -74,12 +66,9 @@ $totalProducts = $productController->getTotalProducts();
                         </div>
                     </div>
                 </div>
-
-                <!-- Recent Activity -->
                 <div class="recent-activity">
                     <h4 class="mb-4">Recent Activity</h4>
                     <div class="dashboard-card">
-                        <!-- Recent Users -->
                         <h5>Latest Users</h5>
                         <?php 
                         $recentUsers = $userController->getAllUsers();
@@ -99,8 +88,6 @@ $totalProducts = $productController->getTotalProducts();
                         <?php endforeach; ?>
                     </div>
                 </div>
-
-                <!-- Quick Actions -->
                 <div class="row mt-4">
                     <div class="col-md-6">
                         <div class="dashboard-card">

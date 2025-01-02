@@ -11,44 +11,32 @@ class UserController {
     private $user;
 
     public function __construct() {
-        // Create database connection
         $database = new Database();
         $this->db = $database->getConnection();
-        
-        // Initialize User model
         $this->user = new User($this->db);
     }
 
     public function register($data) {
         try {
-            // Validate input
             if ($data['password'] !== $data['confirm_password']) {
                 $_SESSION['error'] = "Passwords do not match";
                 header("Location: ../views/user/register.php");
                 return;
             }
-    
-            // Set user properties
             $this->user->username = $data['username'];
             $this->user->email = $data['email'];
             $this->user->password = $data['password'];
             $this->user->phone_number = $data['phone_number'];
-    
-            // Create the user
             if ($this->user->create()) {
-                // Get the new user's ID from the database
                 $sql = "SELECT id, username FROM users WHERE email = :email";
                 $stmt = $this->db->prepare($sql);
                 $stmt->bindParam(":email", $data['email']);
                 $stmt->execute();
                 $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-                // Set session variables to log in the user
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['success'] = "Registration successful! Welcome to SouqCycle!";
-                
-                // Redirect to index page
+
                 header("Location: ../index.php");
                 exit();
             } else {
@@ -102,46 +90,29 @@ class UserController {
      }
     public function logout() {
         try {
-            // Start the session if not already started
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
-    
-            // Clear all session variables
             $_SESSION = array();
-    
-            // Destroy the session cookie if it exists
+
             if (isset($_COOKIE[session_name()])) {
                 setcookie(session_name(), '', time() - 3600, '/');
             }
-    
-            // Destroy the session
             session_destroy();
-    
-            // Clear any other relevant cookies if you have them
-            // For example, if you have a "remember me" cookie:
             setcookie('remember_me', '', time() - 3600, '/');
-            
-            // Clear any other application-specific cookies
             setcookie('user_id', '', time() - 3600, '/');
             setcookie('user_email', '', time() - 3600, '/');
-    
-            // Redirect to the index page
             header("Location: ../index.php");
             exit();
             
         } catch (Exception $e) {
-            // Log the error (you can customize this based on your logging system)
             error_log("Logout error: " . $e->getMessage());
-            
-            // Redirect to index page even if there's an error
             header("Location: ../index.php?error=logout_failed");
             exit();
         }
     }
     
     public function getUserProfile($userId) {
-        // Create query to get user details
         $query = "SELECT id, username, email, phone_number, registration_date 
                   FROM users 
                   WHERE id = :id";
@@ -180,7 +151,6 @@ public function getAllUsers() {
 }
 
 public function toggleAdminStatus($userId) {
-    // Don't allow changing own admin status
     if ($userId == $_SESSION['user_id']) {
         $_SESSION['error'] = "You cannot change your own admin status";
         return false;
@@ -206,8 +176,6 @@ public function deleteUser($userId) {
         error_log("Starting delete user process for ID: " . $userId);
 
         $this->db->beginTransaction();
-
-        // First check if user exists
         $checkQuery = "SELECT * FROM users WHERE id = :id";
         $stmt = $this->db->prepare($checkQuery);
         $stmt->execute([':id' => $userId]);
@@ -216,14 +184,10 @@ public function deleteUser($userId) {
             error_log("User not found: " . $userId);
             throw new Exception("User not found");
         }
-
-        // Delete all user's products
         $query = "DELETE FROM products WHERE user_id = :user_id";
         $stmt = $this->db->prepare($query);
         $stmt->execute([':user_id' => $userId]);
         error_log("Deleted products for user: " . $userId);
-
-        // Delete the user
         $query = "DELETE FROM users WHERE id = :id";
         $stmt = $this->db->prepare($query);
         $stmt->execute([':id' => $userId]);
@@ -241,7 +205,6 @@ public function deleteUser($userId) {
     
 }
 $controller = new UserController();
-// Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     switch($_POST['action']) {
         case 'register':

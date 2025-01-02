@@ -4,21 +4,17 @@ require_once "../includes/auth_check.php";
 require_once "../../controllers/UserController.php";
 require_once "../../controllers/ProductController.php";
 
-// Ensure user is logged in
 requireLogin();
 
-// Initialize controllers
 $userController = new UserController();
 $productController = new ProductController();
 
-// Get user profile and their listings
 $profile = $userController->getUserProfile($_SESSION['user_id']);
 $userListings = $productController->getUserProducts($_SESSION['user_id']);
 ?>
 
 <div class="container">
     <div class="row">
-        <!-- User Profile Section -->
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-header">
@@ -57,8 +53,6 @@ $userListings = $productController->getUserProducts($_SESSION['user_id']);
                 </div>
             </div>
         </div>
-
-        <!-- User Listings Section -->
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">

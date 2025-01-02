@@ -36,7 +36,6 @@ class ProductController {
             }
         }
     }
-    // Handle product creation
     public function createProduct($data, $files) {
         if (!isset($_SESSION['is_logged_in'])) {
             $_SESSION['error'] = "You must be logged in to create a listing";
@@ -53,7 +52,7 @@ class ProductController {
         $this->product->title = $data['title'];
     $this->product->description = $data['description'];
     $this->product->price = $data['price'];
-    $this->product->category_id = $data['category_id']; // Added this line
+    $this->product->category_id = $data['category_id'];
     $this->product->user_id = $_SESSION['user_id'];
      
         if ($this->product->create()) {
@@ -73,8 +72,6 @@ class ProductController {
         header("Location: ../views/product/create.php");
         exit();
      }
-
-    // Handle product listing display
     public function listProducts() {
         return $this->product->getAllProducts('available');
     }
@@ -118,13 +115,10 @@ class ProductController {
             return false;
         }
     }
-
-    // Handle single product display
     public function showProduct($id) {
         return $this->product->getProductById($id);
     }
     public function updateProductStatus($productId, $status) {
-        // Make sure the user owns this product
         $product = $this->product->getProductById($productId);
         if (!$product || $product['user_id'] != $_SESSION['user_id']) {
             $_SESSION['error'] = "You don't have permission to modify this listing";
@@ -142,11 +136,8 @@ class ProductController {
 
     public function deleteProduct($productId) {
         try {
-            // First delete associated images
             $imageHandler = new ProductImage($this->db);
             $imageHandler->deleteProductImages($productId);
-            
-            // Then delete the product
             if ($this->product->delete($productId)) {
                 return true;
             }
@@ -158,7 +149,6 @@ class ProductController {
     }
     
     public function getUserProducts($userId) {
-        // Create query to get all products for a specific user
         $query = "SELECT * FROM products 
                   WHERE user_id = :user_id 
                   ORDER BY creation_date DESC";
@@ -232,9 +222,6 @@ class ProductController {
         return $this->product->getProductsByCategory($categoryId);
     }
 }
-
-// Handle form submissions and requests
-// Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $controller = new ProductController();
     
@@ -242,7 +229,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         case 'create':
             $controller->createProduct($_POST, $_FILES);
             break;
-        // Add the delete case here
         case 'delete':
             $controller = new ProductController();
             
@@ -278,8 +264,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 $productId = $_POST['product_id'];
                 $product = $controller->showProduct($productId);
-                
-                // Check if user owns this product
                 if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $product['user_id']) {
                     $_SESSION['error'] = "You don't have permission to modify this listing";
                     header("Location: ../views/product/list.php");
@@ -300,7 +284,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 if (isset($_GET['action'])) {
     $action = $_GET['action'];
 } else {
-    $action = '';  // or set default action
+    $action = '';
 }
 if (!isset($_GET['action'])) {
     $_GET['action'] = 'default';

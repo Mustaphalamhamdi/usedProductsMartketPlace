@@ -1,7 +1,6 @@
 <?php
 require_once "../includes/header.php";
 
-// Display any error or success messages
 if (isset($_SESSION['error'])) {
     echo '<div class="alert alert-danger">' . $_SESSION['error'] . '</div>';
     unset($_SESSION['error']);
@@ -20,7 +19,6 @@ if (isset($_SESSION['success'])) {
             </div>
             <div class="card-body">
                 <form action="../../controllers/UserController.php" method="POST">
-                    <!-- Hidden input to identify the action -->
                     <input type="hidden" name="action" value="login">
                     
                     <div class="mb-3">

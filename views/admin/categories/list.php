@@ -3,14 +3,12 @@ require_once "../../includes/header.php";
 require_once "../../includes/auth_check.php";
 require_once "../../../controllers/CategoryController.php";
 
-// Ensure user is admin
 requireAdmin();
 
-// Get all categories
 $categoryController = new CategoryController();
+
 $categories = $categoryController->getAllCategories();
 
-// Display messages
 if (isset($_SESSION['success'])) {
     echo '<div class="alert alert-success">' . $_SESSION['success'] . '</div>';
     unset($_SESSION['success']);
@@ -73,7 +71,6 @@ if (isset($_SESSION['error'])) {
     </div>
 </div>
 
-<!-- Add Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -102,7 +99,6 @@ if (isset($_SESSION['error'])) {
     </div>
 </div>
 
-<!-- Edit Category Modal -->
 <div class="modal fade" id="editCategoryModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">

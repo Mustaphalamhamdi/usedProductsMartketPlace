@@ -1,23 +1,18 @@
 <?php
 class Database {
-    private $host = "localhost";
+    private $host = "u200606317_souqcycle";
     private $db_name = "souqcycle";
-    private $username = "root";
-    private $password = "";
+    private $username = "mustapha";
+    private $password = "Mustapha1211@@";
     
     public function getConnection() {
         try {
-            // Try connecting without database first
             $conn = new PDO(
                 "mysql:host=" . $this->host,
                 $this->username,
                 $this->password
             );
-            
-            // Create database if not exists
             $conn->exec("CREATE DATABASE IF NOT EXISTS $this->db_name");
-            
-            // Connect to the database
             $conn = new PDO(
                 "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
                 $this->username,
