@@ -107,25 +107,17 @@ function toggleAdminStatus(userId, currentStatus) {
         form.submit();
     }
 }
-
 function deleteUser(userId) {
-    if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+    if (confirm('Are you sure you want to delete this user?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '../../../controllers/UserController.php';
+        form.action = '/controllers/UserController.php';
 
-        const actionInput = document.createElement('input');
-        actionInput.type = 'hidden';
-        actionInput.name = 'action';
-        actionInput.value = 'delete_user';
+        form.innerHTML = `
+            <input type="hidden" name="action" value="delete_user">
+            <input type="hidden" name="user_id" value="${userId}">
+        `;
 
-        const userInput = document.createElement('input');
-        userInput.type = 'hidden';
-        userInput.name = 'user_id';
-        userInput.value = userId;
-
-        form.appendChild(actionInput);
-        form.appendChild(userInput);
         document.body.appendChild(form);
         form.submit();
     }

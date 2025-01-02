@@ -2,157 +2,114 @@
 require_once "../includes/header.php";
 require_once "../../controllers/ProductController.php";
 require_once "../../controllers/CategoryController.php";
+require_once "../../models/ProductImage.php";
 
-// Initialize variables
-$searchTerm = $_GET['search'] ?? '';
-$sortBy = $_GET['sort'] ?? 'newest';
-$selectedCategory = isset($_GET['category']) ? (int)$_GET['category'] : null;
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-// Initialize the controller and get all products
+$db = (new Database())->getConnection();
 $productController = new ProductController();
 $categoryController = new CategoryController();
-// Get data
-$categories = $categoryController->getAllCategories();
-$result = $productController->getPagedProducts($page, $searchTerm, $sortBy, $selectedCategory);
-
-$products = $result['products'];
-$products = $productController->listProducts();
 $categories = $categoryController->listCategories();
-$currentPage = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-$currentPage = max(1, $currentPage); // Ensure page is at least 1
-
 $selectedCategory = isset($_GET['category']) ? $_GET['category'] : null;
-$result = $productController->getPagedProducts(
-    $currentPage,
-    $searchTerm,
-    $sortBy,
-    $selectedCategory
-);
-
-$products = $result['products'];
-$totalPages = $result['total_pages'];
-
 $products = $selectedCategory ? 
-    $productController->listProductsByCategory($selectedCategory) :
+    $productController->listProductsByCategory($selectedCategory) : 
     $productController->listProducts();
-
-// Display any messages
-if (isset($_SESSION['success'])) {
-    echo '<div class="alert alert-success">' . $_SESSION['success'] . '</div>';
-    unset($_SESSION['success']);
-}
 ?>
 
-<div class="container">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1>Available Products</h1>
-        </div>
-        <?php if (isset($_SESSION['user_id'])): ?>
-            <div class="col-md-4 text-end">
-                <a href="create.php" class="btn btn-primary">Create New Listing</a>
-            </div>
-        <?php endif; ?>
-    </div>
+<!-- Link to product list specific CSS -->
+<link rel="stylesheet" href="/../assets/css/productsList.css">
 
-    <!-- Category Filter Section -->
-    <div class="row mb-4">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Filter by Category</h5>
-                    <div class="d-flex flex-wrap gap-2">
-                        <a href="list.php" class="btn <?php echo !$selectedCategory ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                            All Categories
-                        </a>
-                        <?php foreach ($categories as $category): ?>
-                            <a href="?category=<?php echo $category['id']; ?>" 
-                               class="btn <?php echo $selectedCategory == $category['id'] ? 'btn-primary' : 'btn-outline-primary'; ?>">
-                                <?php echo htmlspecialchars($category['name']); ?>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
+<!-- Page Header -->
+<div class="product-page-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="mb-3">Available Products</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/" class="text-white">Home</a></li>
+                        <li class="breadcrumb-item active text-white-50" aria-current="page">Products</li>
+                    </ol>
+                </nav>
             </div>
-        </div>
-    </div>
-    <div class="row mb-3">
-    <div class="col">
-        <p class="text-muted">
-            Showing <?php echo count($products); ?> of <?php echo $result['total_items']; ?> products
-            <?php if ($searchTerm || $selectedCategory): ?>
-                matching your criteria
+            <?php if (isset($_SESSION['user_id'])): ?>
+                <div class="col-md-6 text-md-end">
+                    <a href="create.php" class="btn-create-listing">
+                        <i class="bi bi-plus-circle me-2"></i>Create New Listing
+                    </a>
+                </div>
             <?php endif; ?>
-        </p>
+        </div>
     </div>
 </div>
-    <!-- Products Grid -->
+
+<div class="container pb-5">
     <div class="row">
-        <?php if ($products && count($products) > 0): ?>
-            <?php foreach ($products as $product): ?>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo htmlspecialchars($product['title']); ?></h5>
-                            <p class="card-text">
-                                <?php echo substr(htmlspecialchars($product['description']), 0, 100) . '...'; ?>
-                            </p>
-                            <p class="card-text">
-                                <strong>Price: </strong><?php echo number_format($product['price'], 2); ?> MAD
-                            </p>
-                            <p class="card-text">
-                                <small class="text-muted">Posted by: <?php echo htmlspecialchars($product['username']); ?></small>
-                            </p>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <a href="view.php?id=<?php echo $product['id']; ?>" class="btn btn-primary w-100">
-                                View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="col-12">
-                <div class="alert alert-info">
-                    No products available in this category at the moment.
+        <!-- Filters Sidebar -->
+        <div class="col-md-3">
+            <div class="filter-sidebar">
+                <h5 class="mb-4">Categories</h5>
+                <div class="category-filter">
+                    <a href="list.php" class="<?php echo !$selectedCategory ? 'active' : ''; ?>">
+                        <i class="bi bi-grid me-2"></i>All Categories
+                    </a>
+                    <?php foreach ($categories as $category): ?>
+                        <a href="?category=<?php echo $category['id']; ?>" 
+                           class="<?php echo $selectedCategory == $category['id'] ? 'active' : ''; ?>">
+                            <?php echo htmlspecialchars($category['name']); ?>
+                        </a>
+                    <?php endforeach; ?>
                 </div>
             </div>
-        <?php endif; ?>
-    </div>
-    <?php if ($totalPages > 1): ?>
-    <div class="row">
-        <div class="col-12">
-            <nav aria-label="Product pagination">
-                <ul class="pagination justify-content-center">
-                    <!-- Previous page link -->
-                    <li class="page-item <?php echo $currentPage <= 1 ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $currentPage - 1])); ?>">
-                            Previous
-                        </a>
-                    </li>
-                    
-                    <!-- Page numbers -->
-                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
-                        <li class="page-item <?php echo $i == $currentPage ? 'active' : ''; ?>">
-                            <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $i])); ?>">
-                                <?php echo $i; ?>
-                            </a>
-                        </li>
-                    <?php endfor; ?>
-                    
-                    <!-- Next page link -->
-                    <li class="page-item <?php echo $currentPage >= $totalPages ? 'disabled' : ''; ?>">
-                        <a class="page-link" href="?<?php echo http_build_query(array_merge($_GET, ['page' => $currentPage + 1])); ?>">
-                            Next
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="col-md-9">
+            <?php if ($products && count($products) > 0): ?>
+                <div class="product-grid">
+                    <?php foreach ($products as $product): 
+                        $productImage = new ProductImage($db);
+                        $images = $productImage->getProductImages($product['id']);
+                        $imagePath = !empty($images) ? "/SouqCycle/uploads/products/" . $images[0]['image_path'] : "/SouqCycle/assets/images/no-image.jpg";
+                    ?>
+                        <div class="product-card">
+                            <div class="position-relative">
+                                <img src="<?php echo htmlspecialchars($imagePath); ?>" 
+                                     class="product-image"
+                                     alt="<?php echo htmlspecialchars($product['title']); ?>">
+                                <span class="price-badge">
+                                    <?php echo number_format($product['price'], 2); ?> MAD
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title mb-2">
+                                    <?php echo htmlspecialchars($product['title']); ?>
+                                </h5>
+                                <p class="card-text text-muted">
+                                    <?php echo substr(htmlspecialchars($product['description']), 0, 100) . '...'; ?>
+                                </p>
+                                <div class="seller-info">
+                                    <div class="seller-avatar">
+                                        <i class="bi bi-person"></i>
+                                    </div>
+                                    <small class="text-muted">
+                                        <?php echo htmlspecialchars($product['username']); ?>
+                                    </small>
+                                </div>
+                                <a href="view.php?id=<?php echo $product['id']; ?>" 
+                                   class="view-details-btn d-block text-center mt-3">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    No products available in this category at the moment.
+                </div>
+            <?php endif; ?>
         </div>
     </div>
-<?php endif; ?>
 </div>
 
 <?php require_once "../includes/footer.php"; ?>

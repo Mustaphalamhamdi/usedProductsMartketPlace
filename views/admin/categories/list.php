@@ -40,7 +40,6 @@ if (isset($_SESSION['error'])) {
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
-                            <th>Products Count</th>
                             <th>Created Date</th>
                             <th>Actions</th>
                         </tr>
@@ -51,17 +50,12 @@ if (isset($_SESSION['error'])) {
                                 <tr>
                                     <td><?php echo htmlspecialchars($category['name']); ?></td>
                                     <td><?php echo htmlspecialchars($category['description']); ?></td>
-                                    <td><?php echo $category['product_count']; ?></td>
                                     <td><?php echo date('Y-m-d', strtotime($category['creation_date'])); ?></td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
                                             <button class="btn btn-warning" 
                                                     onclick="editCategory(<?php echo htmlspecialchars(json_encode($category)); ?>)">
                                                 Edit
-                                            </button>
-                                            <button class="btn btn-danger" 
-                                                    onclick="deleteCategory(<?php echo $category['id']; ?>)">
-                                                Delete
                                             </button>
                                         </div>
                                     </td>
@@ -145,30 +139,6 @@ function editCategory(category) {
     document.getElementById('edit_description').value = category.description;
     
     new bootstrap.Modal(document.getElementById('editCategoryModal')).show();
-}
-
-function deleteCategory(categoryId) {
-    if (confirm('Are you sure you want to delete this category? This may affect products using this category.')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '../../../controllers/CategoryController.php';
-
-        const inputs = {
-            'action': 'delete',
-            'category_id': categoryId
-        };
-
-        Object.entries(inputs).forEach(([name, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = name;
-            input.value = value;
-            form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-    }
 }
 </script>
 

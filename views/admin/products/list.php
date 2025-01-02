@@ -68,21 +68,6 @@ if (isset($_SESSION['error'])) {
                                         <div class="btn-group btn-group-sm">
                                             <a href="../../product/view.php?id=<?php echo $product['id']; ?>" 
                                                class="btn btn-info">View</a>
-                                            <?php if ($product['status'] === 'available'): ?>
-                                                <button class="btn btn-warning" 
-                                                        onclick="changeStatus(<?php echo $product['id']; ?>, 'sold')">
-                                                    Mark Sold
-                                                </button>
-                                            <?php else: ?>
-                                                <button class="btn btn-success" 
-                                                        onclick="changeStatus(<?php echo $product['id']; ?>, 'available')">
-                                                    Mark Available
-                                                </button>
-                                            <?php endif; ?>
-                                            <button class="btn btn-danger" 
-                                                    onclick="deleteProduct(<?php echo $product['id']; ?>)">
-                                                Delete
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -111,55 +96,6 @@ function filterProducts() {
             row.style.display = 'none';
         }
     });
-}
-
-function changeStatus(productId, newStatus) {
-    if (confirm('Are you sure you want to change this product\'s status?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '../../../controllers/ProductController.php';
-
-        const inputs = {
-            'action': 'admin_update_status',
-            'product_id': productId,
-            'status': newStatus
-        };
-
-        Object.entries(inputs).forEach(([name, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = name;
-            input.value = value;
-            form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
-
-function deleteProduct(productId) {
-    if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '../../../controllers/ProductController.php';
-
-        const inputs = {
-            'action': 'admin_delete_product',
-            'product_id': productId
-        };
-
-        Object.entries(inputs).forEach(([name, value]) => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = name;
-            input.value = value;
-            form.appendChild(input);
-        });
-
-        document.body.appendChild(form);
-        form.submit();
-    }
 }
 </script>
 

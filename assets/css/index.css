@@ -1,0 +1,270 @@
+/* Global Styles */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 150px 0 100px;
+    margin-top: -2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff10" fill-opacity="1" d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>');
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    opacity: 0.1;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    background: linear-gradient(to right, #ffffff, #e0e7ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+/* Categories Section */
+.section-categories {
+    background: white;
+    margin-top: -50px;
+    border-radius: 30px 30px 0 0;
+    padding: 50px 0;
+    position: relative;
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.05);
+}
+
+.category-card {
+    border: none;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    background: white;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #1e3c72, #2a5298);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.category-card:hover::before {
+    transform: scaleX(1);
+}
+
+.category-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(30,60,114,0.1);
+}
+
+.category-icon {
+    font-size: 3rem;
+    color: #1e3c72;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.category-card:hover .category-icon {
+    transform: scale(1.1);
+}
+
+/* Products Section */
+.product-section {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+}
+
+.product-card {
+    border: none;
+    border-radius: 20px;
+    transition: all 0.4s ease;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(30,60,114,0.1);
+}
+
+.product-image {
+    height: 250px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.1);
+}
+
+.product-price {
+    font-size: 1.5rem;
+    color: #1e3c72;
+    font-weight: 700;
+}
+
+/* How It Works Section */
+.how-it-works {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 100px 0;
+    margin: 3rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.how-it-works::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231e3c72' fill-opacity='0.05' fill-rule='evenodd'%3E%3Cpath d='M5 0h1L0 6V5zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.step-card {
+    background: white;
+    padding: 3rem 2rem;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    transition: all 0.4s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 25px;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    opacity: 0;
+    z-index: -1;
+    transition: all 0.4s ease;
+}
+
+.step-card:hover::before {
+    opacity: 1;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    color: white;
+}
+
+.step-icon {
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+    transition: all 0.4s ease;
+    display: inline-block;
+}
+
+.step-card:hover .step-icon {
+    transform: scale(1.1);
+    color: white;
+}
+
+.step-card:hover p {
+    color: rgba(255,255,255,0.8) !important;
+}
+
+/* Buttons */
+.btn-gradient {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border: none;
+    color: white !important;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    transition: all 0.4s ease;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #2a5298, #1e3c72);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.btn-gradient:hover::before {
+    opacity: 1;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(30,60,114,0.2);
+}
+
+/* Add Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* Animations */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.hero-title {
+    animation: float 6s ease-in-out infinite;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #2a5298, #1e3c72);
+}

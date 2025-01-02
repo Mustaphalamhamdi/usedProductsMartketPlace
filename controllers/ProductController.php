@@ -1,9 +1,11 @@
 <?php
-session_start();
 require_once __DIR__ . "/../config/database.php";
 require_once __DIR__ . "/../models/Product.php";
 require_once __DIR__ . "/../models/ProductImage.php";
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 class ProductController {
     private $db;
     private $product;
@@ -36,51 +38,41 @@ class ProductController {
     }
     // Handle product creation
     public function createProduct($data, $files) {
-        // Check if user is logged in
-        if (!isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['is_logged_in'])) {
             $_SESSION['error'] = "You must be logged in to create a listing";
             header("Location: ../views/user/login.php");
-            exit(); // Added exit after redirect
-            return;
+            exit();
         }
-
-        // Validate input
+     
         if (empty($data['title']) || empty($data['description']) || empty($data['price'])) {
             $_SESSION['error'] = "Please fill in all required fields";
             header("Location: ../views/product/create.php");
-            exit(); // Added exit after redirect
-            return;
+            exit();
         }
-
-        // Set product properties
+     
         $this->product->title = $data['title'];
-        $this->product->description = $data['description'];
-        $this->product->price = $data['price'];
-        $this->product->user_id = $_SESSION['user_id'];
-
-        // Create the product
+    $this->product->description = $data['description'];
+    $this->product->price = $data['price'];
+    $this->product->category_id = $data['category_id']; // Added this line
+    $this->product->user_id = $_SESSION['user_id'];
+     
         if ($this->product->create()) {
             $productId = $this->db->lastInsertId();
             
-            // Handle image uploads
-            if (isset($files['images'])) {
+            if (!empty($_FILES['images'])) {
                 $imageHandler = new ProductImage($this->db);
-                $uploadResult = $imageHandler->uploadImages($productId, $files['images']);
-                
-                if (!$uploadResult['success']) {
-                    $_SESSION['warning'] = "Product created but some images failed to upload: " . 
-                                         implode(", ", $uploadResult['errors']);
-                }
+                $imageHandler->uploadImages($productId, $_FILES['images']);
             }
-    
-            $_SESSION['success'] = "Product listed successfully!";
+            
+            $_SESSION['success'] = "Product created successfully!";
             header("Location: ../views/product/list.php");
-        } else {
-            $_SESSION['error'] = "Failed to create listing. Please try again.";
-            header("Location: ../views/product/create.php");
-        }
-        exit(); // Added exit after redirect
-    }
+            exit();
+        } 
+     
+        $_SESSION['error'] = "Failed to create listing. Please try again.";
+        header("Location: ../views/product/create.php");
+        exit();
+     }
 
     // Handle product listing display
     public function listProducts() {
@@ -147,22 +139,21 @@ class ProductController {
         }
         header("Location: ../views/product/view.php?id=" . $productId);
     }
-    
+
     public function deleteProduct($productId) {
-        // Make sure the user owns this product
-        $product = $this->product->getProductById($productId);
-        if (!$product || $product['user_id'] != $_SESSION['user_id']) {
-            $_SESSION['error'] = "You don't have permission to delete this listing";
-            header("Location: ../views/product/view.php?id=" . $productId);
-            return;
-        }
-    
-        if ($this->product->delete($productId)) {
-            $_SESSION['success'] = "Product deleted successfully";
-            header("Location: ../views/product/list.php");
-        } else {
-            $_SESSION['error'] = "Failed to delete product";
-            header("Location: ../views/product/view.php?id=" . $productId);
+        try {
+            // First delete associated images
+            $imageHandler = new ProductImage($this->db);
+            $imageHandler->deleteProductImages($productId);
+            
+            // Then delete the product
+            if ($this->product->delete($productId)) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            error_log("Delete product error: " . $e->getMessage());
+            return false;
         }
     }
     
@@ -210,6 +201,27 @@ class ProductController {
             return [];
         }
     }
+    public function getProductCountByCategory($categoryId) {
+        try {
+            $query = "SELECT COUNT(*) as count 
+                      FROM products 
+                      WHERE category_id = :category_id 
+                      AND status = 'available'";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(":category_id", $categoryId);
+            $stmt->execute();
+            
+            error_log("Category ID: " . $categoryId); // Debug
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            error_log("Count result: " . print_r($result, true)); // Debug
+            
+            return $result['count'] ?? 0;
+        } catch(PDOException $e) {
+            error_log("Error getting product count: " . $e->getMessage());
+            return 0;
+        }
+    }
     public function getPagedProducts($page = 1, $searchTerm = '', $sortBy = '', $categoryId = null) {
         return $this->product->getProductsWithPagination($page, $searchTerm, $sortBy, $categoryId);
     }
@@ -222,15 +234,67 @@ class ProductController {
 }
 
 // Handle form submissions and requests
+// Handle form submissions
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $controller = new ProductController();
     
-    if (isset($_POST['action'])) {
-        switch($_POST['action']) {
-            case 'create':
-                $controller->createProduct($_POST, $_FILES);
+    switch($_POST['action']) {
+        case 'create':
+            $controller->createProduct($_POST, $_FILES);
+            break;
+        // Add the delete case here
+        case 'delete':
+            $controller = new ProductController();
+            
+            if (!isset($_POST['product_id'])) {
+                $_SESSION['error'] = "Product ID not specified";
+                header("Location: ../views/product/list.php");
+                exit();
+            }
+            
+            $productId = $_POST['product_id'];
+            $product = $controller->showProduct($productId);
+            
+            if (!isset($_SESSION['user_id']) || (!isset($_SESSION['is_admin']) && $_SESSION['user_id'] != $product['user_id'])) {
+                $_SESSION['error'] = "Unauthorized access";
+                header("Location: ../views/product/list.php");
+                exit();
+            }
+            
+            if ($controller->deleteProduct($productId)) {
+                $_SESSION['success'] = "Product deleted successfully";
+                header("Location: ../views/product/list.php");
+            } else {
+                $_SESSION['error'] = "Failed to delete product";
+                header("Location: ../views/product/list.php");
+            }
+            exit();
+            case 'mark_sold':
+                if (!isset($_POST['product_id'])) {
+                    $_SESSION['error'] = "Product ID not specified";
+                    header("Location: ../views/product/list.php");
+                    exit();
+                }
+                
+                $productId = $_POST['product_id'];
+                $product = $controller->showProduct($productId);
+                
+                // Check if user owns this product
+                if (!isset($_SESSION['user_id']) || $_SESSION['user_id'] != $product['user_id']) {
+                    $_SESSION['error'] = "You don't have permission to modify this listing";
+                    header("Location: ../views/product/list.php");
+                    exit();
+                }
+                
+                if ($controller->updateProductStatus($productId, 'sold')) {
+                    $_SESSION['success'] = "Product marked as sold";
+                    header("Location: ../views/product/view.php?id=" . $productId);
+                } else {
+                    $_SESSION['error'] = "Failed to update product status";
+                    header("Location: ../views/product/view.php?id=" . $productId);
+                }
+                exit();
                 break;
-        }
     }
 }
 if (isset($_GET['action'])) {

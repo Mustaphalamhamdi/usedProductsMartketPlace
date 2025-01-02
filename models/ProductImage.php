@@ -2,64 +2,68 @@
 class ProductImage {
     private $conn;
     private $table_name = "product_images";
-    private $upload_path = "../uploads/products/";
+    private $upload_path;
     private $allowed_types = ['image/jpeg', 'image/png', 'image/jpg'];
-    private $max_size = 5242880; // 5MB in bytes
+    private $max_size = 5242880;
 
     public function __construct($db) {
         $this->conn = $db;
-        // Create uploads directory if it doesn't exist
-        if (!file_exists($this->upload_path)) {
-            mkdir($this->upload_path, 0755, true);
+        $this->upload_path = $_SERVER['DOCUMENT_ROOT'] . "/SouqCycle/uploads/products/";
+        if (!is_dir($this->upload_path)) {
+            mkdir($this->upload_path, 0777, true);
         }
     }
 
-    public function uploadImages($productId, $images) {
-        error_log("Starting image upload for product ID: " . $productId);
-        error_log("Image data received: " . print_r($images, true));
-        // ... rest of your upload code
-    }
-
-    private function validateFile($file) {
-        // Check for upload errors
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            return false;
+    public function uploadImages($productId, $files) {
+        $results = ['success' => true, 'errors' => []];
+        
+        foreach ($files['name'] as $key => $name) {
+            if ($files['error'][$key] === UPLOAD_ERR_OK) {
+                $ext = pathinfo($name, PATHINFO_EXTENSION);
+                $newName = uniqid() . '.' . $ext;
+                $destination = $this->upload_path . $newName;
+                
+                if (move_uploaded_file($files['tmp_name'][$key], $destination)) {
+                    $stmt = $this->conn->prepare(
+                        "INSERT INTO {$this->table_name} (product_id, image_path) VALUES (?, ?)"
+                    );
+                    if (!$stmt->execute([$productId, $newName])) {
+                        $results['errors'][] = "Database error for {$name}";
+                        $results['success'] = false;
+                    }
+                }
+            }
         }
-
-        // Check file type
-        if (!in_array($file['type'], $this->allowed_types)) {
-            return false;
-        }
-
-        // Check file size
-        if ($file['size'] > $this->max_size) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private function restructureFilesArray($files) {
-        return [
-            'name' => [$files['name']],
-            'type' => [$files['type']],
-            'tmp_name' => [$files['tmp_name']],
-            'error' => [$files['error']],
-            'size' => [$files['size']]
-        ];
+        return $results;
     }
 
     public function getProductImages($productId) {
-        $query = "SELECT * FROM " . $this->table_name . "
-                 WHERE product_id = :product_id
-                 ORDER BY is_primary DESC";
-
+        $stmt = $this->conn->prepare(
+            "SELECT * FROM {$this->table_name} WHERE product_id = ? ORDER BY id ASC"
+        );
+        $stmt->execute([$productId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function deleteProductImages($productId) {
         try {
+            // Get all images for this product
+            $images = $this->getProductImages($productId);
+            
+            // Delete physical files
+            foreach ($images as $image) {
+                $filepath = $this->upload_path . $image['image_path'];
+                if (file_exists($filepath)) {
+                    unlink($filepath);
+                }
+            }
+            
+            // Delete database records
+            $query = "DELETE FROM " . $this->table_name . " WHERE product_id = :product_id";
             $stmt = $this->conn->prepare($query);
-            $stmt->bindParam(":product_id", $productId);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt->bindParam(':product_id', $productId);
+            return $stmt->execute();
         } catch(PDOException $e) {
+            error_log("Delete product images error: " . $e->getMessage());
             return false;
         }
     }

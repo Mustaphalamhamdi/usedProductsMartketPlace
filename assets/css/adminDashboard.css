@@ -1,0 +1,112 @@
+.admin-dashboard {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    color: white;
+    padding: 20px;
+}
+
+.sidebar-header {
+    padding: 20px 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 20px;
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.8);
+    padding: 12px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(255,255,255,0.1);
+    color: white;
+    transform: translateX(5px);
+}
+
+.nav-link i {
+    margin-right: 10px;
+}
+
+.content {
+    padding: 30px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    opacity: 0.8;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    opacity: 0.8;
+    font-size: 0.9rem;
+}
+
+.recent-activity {
+    margin-top: 30px;
+}
+
+.activity-item {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}

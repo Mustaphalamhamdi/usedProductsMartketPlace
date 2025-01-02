@@ -73,10 +73,20 @@ class UserController {
             
             if($user = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 if(password_verify($password, $user['password'])) {
+                    error_log("Login successful - User: " . $user['username']);
+                    
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
-                    $_SESSION['is_logged_in'] = true;  // Add this
-                    header("Location: ../index.php");
+                    $_SESSION['is_admin'] = $user['is_admin'];
+                    $_SESSION['is_logged_in'] = true;
+                    
+                    error_log("Session data set: " . print_r($_SESSION, true));
+                    
+                    if($user['is_admin']) {
+                        header("Location: ../views/admin/dashboard.php");
+                    } else {
+                        header("Location: ../index.php");
+                    }
                     exit();
                 }
             }
@@ -84,11 +94,12 @@ class UserController {
             header("Location: ../views/user/login.php?error=invalid_credentials");
             exit();
         } catch(PDOException $e) {
+            error_log("Login error: " . $e->getMessage());
             $_SESSION['error'] = "Login failed. Please try again.";
             header("Location: ../views/user/login.php");
             exit();
         }
-    }
+     }
     public function logout() {
         try {
             // Start the session if not already started
@@ -186,18 +197,44 @@ public function toggleAdminStatus($userId) {
 }
 
 public function deleteUser($userId) {
-    // Don't allow deleting own account
-    if ($userId == $_SESSION['user_id']) {
-        $_SESSION['error'] = "You cannot delete your own account";
-        return false;
-    }
-
-    $query = "DELETE FROM users WHERE id = :id";
     try {
+        if ($userId == $_SESSION['user_id']) {
+            $_SESSION['error'] = "You cannot delete your own account";
+            return false;
+        }
+
+        error_log("Starting delete user process for ID: " . $userId);
+
+        $this->db->beginTransaction();
+
+        // First check if user exists
+        $checkQuery = "SELECT * FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($checkQuery);
+        $stmt->execute([':id' => $userId]);
+        
+        if (!$stmt->fetch()) {
+            error_log("User not found: " . $userId);
+            throw new Exception("User not found");
+        }
+
+        // Delete all user's products
+        $query = "DELETE FROM products WHERE user_id = :user_id";
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(":id", $userId);
-        return $stmt->execute();
-    } catch(PDOException $e) {
+        $stmt->execute([':user_id' => $userId]);
+        error_log("Deleted products for user: " . $userId);
+
+        // Delete the user
+        $query = "DELETE FROM users WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([':id' => $userId]);
+        error_log("User deleted: " . $userId);
+
+        $this->db->commit();
+        return true;
+
+    } catch(Exception $e) {
+        $this->db->rollBack();
+        error_log("Delete user error: " . $e->getMessage());
         return false;
     }
 }
@@ -231,14 +268,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             header("Location: ../views/admin/users/list.php");
             break;
-        case 'delete_user':
-            if($controller->deleteUser($_POST['user_id'])) {
-                $_SESSION['success'] = "User deleted successfully";
-            } else {
-                $_SESSION['error'] = "Failed to delete user";
-            }
-            header("Location: ../views/admin/users/list.php");
-            break;
+            case 'delete_user':
+                error_log("Delete user request for ID: " . $_POST['user_id']);
+                
+                try {
+                    if ($controller->deleteUser($_POST['user_id'])) {
+                        $_SESSION['success'] = "User deleted successfully";
+                    } else {
+                        throw new Exception("Failed to delete user");
+                    }
+                } catch (Exception $e) {
+                    error_log("Delete error: " . $e->getMessage());
+                    $_SESSION['error'] = "Failed to delete user";
+                }
+                
+                header("Location: ../views/admin/users/list.php");
+                exit();
+                break;
     }
 } else if ($_SERVER["REQUEST_METHOD"] == "GET") {
     if(isset($_GET['action']) && $_GET['action'] == 'logout') {
